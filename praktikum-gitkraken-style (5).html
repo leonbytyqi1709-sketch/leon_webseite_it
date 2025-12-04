@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leon | Digitale Praktikumsmappe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0d1117',
+                            800: '#161b22',
+                            700: '#21262d',
+                            600: '#30363d',
+                        },
+                        accent: {
+                            purple: '#8b5cf6',
+                            pink: '#ec4899',
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4',
+                        }
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Logo transparent (schwarzer Hintergrund wird unsichtbar) */
+        .logo-transparent {
+            mix-blend-mode: lighten;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8b5cf6;
+            border-radius: 4px;
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(22, 27, 34, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .glass-card {
+            background: rgba(33, 38, 45, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Glow Effects */
+        .glow-purple {
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        
+        /* Background Gradient Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #8b5cf6;
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #ec4899;
+            bottom: 20%;
+            left: -50px;
+            animation-delay: -3s;
+        }
+        
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: #06b6d4;
+            top: 50%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.05); }
+        }
+        
+        /* Fade In Animation */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Stagger delays */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        
+        /* Navigation Active State */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Week Card Accordion */
+        .week-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .week-card.active .week-content {
+            max-height: 5000px;
+        }
+        
+        .week-card.active .chevron {
+            transform: rotate(180deg);
+        }
+        
+        .chevron {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Table Styles */
+        .modern-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .modern-table th {
+            background: rgba(139, 92, 246, 0.2);
+            border-bottom: 2px solid #8b5cf6;
+        }
+        
+        .modern-table td {
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+        }
+        
+        .modern-table tr:hover td {
+            background: rgba(139, 92, 246, 0.05);
+        }
+        
+        /* Pulse Animation for Status */
+        .status-online {
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-100 min-h-screen overflow-x-hidden">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="glass fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">L</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-white">Leon</span>
+                        <span class="text-gray-400 text-sm block -mt-1">Praktikant</span>
+                    </div>
+                </div>
+                
+                <!-- Nav Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-gray-300 hover:text-white">Start</a>
+                    <a href="#wochen" class="nav-link text-gray-300 hover:text-white">Praktikumswochen</a>
+                    <a href="#beruf" class="nav-link text-gray-300 hover:text-white">Berufssteckbrief</a>
+                    <a href="#galerie" class="nav-link text-gray-300 hover:text-white">Galerie</a>
+                </div>
+                
+                <!-- Status Badge -->
+                <div class="flex items-center space-x-2 px-4 py-2 rounded-full bg-dark-700">
+                    <div class="w-2 h-2 rounded-full bg-green-500 status-online"></div>
+                    <span class="text-sm text-gray-300">Online</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center fade-in">
+                <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-dark-700 border border-accent-purple/30 mb-8">
+                    <span class="w-2 h-2 rounded-full bg-accent-purple animate-pulse"></span>
+                    <span class="text-sm text-gray-300">Langzeitpraktikum 2025</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                    <span class="text-white">Willkommen in </span>
+                    <span class="gradient-text">Leons</span><br>
+                    <span class="text-white">Digitaler </span>
+                    <span class="gradient-text">Praktikumsmappe</span>
+                </h1>
+                
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+                Fachinformatiker für Systemintegration — 
+                    Dokumentation meiner Lernreise in der IT-Welt.
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#wochen" class="px-8 py-4 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white font-medium hover:opacity-90 transition-opacity glow-purple">
+                        Praktikumswochen ansehen
+                    </a>
+                    <a href="#beruf" class="px-8 py-4 rounded-xl bg-dark-700 border border-dark-600 text-white font-medium hover:border-accent-purple/50 transition-colors">
+                        Berufssteckbrief
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20">
+                <div class="glass-card rounded-2xl p-6 text-center fade-in delay-1">
+                    <div class="text-3xl font-bold gradient-text mb-1">2+</div>
+                    <div class="text-gray-400 text-sm">Praktikumswochen</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center fade-in delay-2">
+                    <div class="text-3xl font-bold gradient-text mb-1">10+</div>
+                    <div class="text-gray-400 text-sm">Projekte</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center fade-in delay-3">
+                    <div class="text-3xl font-bold gradient-text mb-1">5+</div>
+                    <div class="text-gray-400 text-sm">Technologien</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center fade-in delay-4">
+                    <div class="text-3xl font-bold gradient-text mb-1">∞</div>
+                    <div class="text-gray-400 text-sm">Motivation</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access Menu -->
+    <section class="py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- File System -->
+                <div class="glass-card rounded-2xl p-6 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-white mb-2">Dateisystem</h3>
+                    <p class="text-gray-400 text-sm">Ordner & Dateien verwalten</p>
+                </div>
+                
+                <!-- Gallery -->
+                <a href="galerie.html" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-white mb-2">Bildergalerie</h3>
+                    <p class="text-gray-400 text-sm">Praktikumsfotos ansehen</p>
+                </a>
+                
+                <!-- Berufssteckbrief -->
+                <a href="#beruf" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-white mb-2">Berufssteckbrief</h3>
+                    <p class="text-gray-400 text-sm">Infos zum Ausbildungsberuf</p>
+                </a>
+                
+                <!-- Next Week -->
+                <div onclick="showModal('Nächste Woche', 'Die kommende Woche wird bald geplant! Schau später wieder vorbei.')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-white mb-2">Nächste Woche</h3>
+                    <p class="text-gray-400 text-sm">Planung & Termine</p>
+                </div>
+                
+                <!-- System Info -->
+                <div onclick="showSystemInfo()" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-cyan to-accent-blue flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-white mb-2">System Info</h3>
+                    <p class="text-gray-400 text-sm">Status & Benutzerinfos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Praktikumswochen Section -->
+    <section id="wochen" class="py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">
+                    <span class="gradient-text">Praktikumswochen</span>
+                </h2>
+                <p class="text-gray-400">Meine täglichen Aktivitäten und Lernerfahrungen</p>
+            </div>
+            
+            <!-- Week 1 -->
+            <div class="week-card glass-card rounded-2xl mb-6 overflow-hidden active">
+                <div class="p-6 cursor-pointer flex items-center justify-between" onclick="toggleWeek(this.parentElement)">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">1</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white">Praktikumswoche 1</h3>
+                            <p class="text-gray-400">01.09.2025 - 05.09.2025</p>
+                        </div>
+                    </div>
+                    <svg class="w-6 h-6 text-gray-400 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                
+                <div class="week-content">
+                    <div class="px-6 pb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <!-- Montag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-purple"></div>
+                                    <span class="font-medium text-white">Montag</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>Bürotour & Arbeitsplätze</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>KI Modelle Vorstellung</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>Betriebssysteme Recherche</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>RDP & SSH Einführung</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>Virtualisierung Geschichte</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Dienstag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-pink"></div>
+                                    <span class="font-medium text-white">Dienstag</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>KI Funktionsweise erklärt</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>NAS Grundlagen & Beispiele</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>MicroServer Demonstration</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>RAID Recherche</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>Serverraum Besichtigung</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Mittwoch -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-cyan"></div>
+                                    <span class="font-medium text-white">Mittwoch</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-cyan">›</span>
+                                        <span>Umfangreiche NAS Recherche</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-cyan">›</span>
+                                        <span>RAID Typen: 0,1,4,5,6,10</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-cyan">›</span>
+                                        <span>KI Grundlagen erforscht</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-cyan">›</span>
+                                        <span>Vor-/Nachteile analysiert</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Donnerstag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-blue"></div>
+                                    <span class="font-medium text-white">Donnerstag</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Arbeiten aufgelistet</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>KI Webentwicklung</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Datenschutz bei KI</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Kundenbesuch: Serverumstellung</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Eigene Website programmiert</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Freitag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-gray-500"></div>
+                                    <span class="font-medium text-white">Freitag</span>
+                                </div>
+                                <div class="flex items-center justify-center h-24 text-gray-500">
+                                    <span>Praktikumsfrei</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Week 2 -->
+            <div class="week-card glass-card rounded-2xl mb-6 overflow-hidden">
+                <div class="p-6 cursor-pointer flex items-center justify-between" onclick="toggleWeek(this.parentElement)">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-accent-cyan to-accent-blue flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">2</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white">Praktikumswoche 2</h3>
+                            <p class="text-gray-400">08.09.2025 - 12.09.2025</p>
+                        </div>
+                    </div>
+                    <svg class="w-6 h-6 text-gray-400 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                
+                <div class="week-content">
+                    <div class="px-6 pb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <!-- Montag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-cyan/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-purple"></div>
+                                    <span class="font-medium text-white">Montag</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>Praktikumswebsite durch KI verändert und verbessert</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>Klassenlehrer Besuch im Praktikumsbetrieb</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-purple">›</span>
+                                        <span>Schreiben von zwei Tagesberichten</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Dienstag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-cyan/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-pink"></div>
+                                    <span class="font-medium text-white">Dienstag</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>Gelernt über HTML & CSS</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>Webbasiertes Minecraft 2D Minispiel programmiert</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>Bearbeitung der Praktikumsmappe</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-pink">›</span>
+                                        <span>Schreiben von einem Tagesbericht</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Mittwoch -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-cyan/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-cyan"></div>
+                                    <span class="font-medium text-white">Mittwoch</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-cyan">›</span>
+                                        <span>Kopie der Praktikumswebsite selbstständig programmiert</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-cyan">›</span>
+                                        <span>Webbasiertes Tetris in 2D programmiert</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-cyan">›</span>
+                                        <span>Veränderungen an Praktikumswebsite durch KI</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Donnerstag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-cyan/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-accent-blue"></div>
+                                    <span class="font-medium text-white">Donnerstag</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-300">
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Viele Veränderungen an Praktikumswebsite</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Praktikumsvertrag unterschrieben</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Selbstbewertungseinschätzung ausgefüllt</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Praktikumsbewertung vom Chef</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <span class="text-accent-blue">›</span>
+                                        <span>Vorgangsbeschreibung geschrieben</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Freitag -->
+                            <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600 hover:border-accent-cyan/30 transition-colors">
+                                <div class="flex items-center space-x-2 mb-3 pb-2 border-b border-dark-600">
+                                    <div class="w-2 h-2 rounded-full bg-gray-500"></div>
+                                    <span class="font-medium text-white">Freitag</span>
+                                </div>
+                                <div class="flex items-center justify-center h-24 text-gray-500">
+                                    <span>Praktikumsfrei</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Berufssteckbrief Section -->
+    <section id="beruf" class="py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">
+                    <span class="gradient-text">Berufssteckbrief</span>
+                </h2>
+                <p class="text-gray-400">Fachinformatiker/in für Systemintegration</p>
+            </div>
+            
+            <!-- Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="text-accent-purple text-sm font-medium mb-1">Berufstyp</div>
+                    <div class="text-white font-semibold">Anerkannter Ausbildungsberuf</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="text-accent-pink text-sm font-medium mb-1">Branche</div>
+                    <div class="text-white font-semibold">Informationstechnologie</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="text-accent-cyan text-sm font-medium mb-1">Ausbildungsdauer</div>
+                    <div class="text-white font-semibold">3 Jahre (verkürzbar auf 2,5)</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="text-accent-blue text-sm font-medium mb-1">Arbeitsbereich</div>
+                    <div class="text-white font-semibold">IT-Infrastruktur & Netzwerke</div>
+                </div>
+            </div>
+            
+            <!-- Hauptaufgaben -->
+            <div class="glass-card rounded-2xl p-6 mb-8">
+                <h3 class="text-xl font-semibold text-white mb-6 flex items-center">
+                    <div class="w-2 h-2 rounded-full bg-accent-purple mr-3"></div>
+                    Hauptaufgaben
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="modern-table w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-left p-4 text-accent-purple font-medium rounded-tl-lg">Tätigkeitsfeld</th>
+                                <th class="text-left p-4 text-accent-purple font-medium rounded-tr-lg">Beschreibung</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-300">
+                            <tr>
+                                <td class="p-4 font-medium text-white">Systemintegration</td>
+                                <td class="p-4">Planung, Installation und Konfiguration von IT-Systemen und Netzwerken</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-white">Hard-/Software-Integration</td>
+                                <td class="p-4">Integration von Hard- und Softwarekomponenten zu komplexen Systemen</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-white">Administration</td>
+                                <td class="p-4">Administration und Wartung von Servern und Netzwerken</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-white">Support</td>
+                                <td class="p-4">Fehleranalyse, Störungsbehebung und IT-Support</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-white">IT-Sicherheit</td>
+                                <td class="p-4">Implementierung von IT-Sicherheitsmaßnahmen</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-white">Dokumentation & Schulung</td>
+                                <td class="p-4">Dokumentation von Systemkonfigurationen und Mitarbeiterschulung</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Zwei-Spalten Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Ausbildungsvergütung -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-semibold text-white mb-6 flex items-center">
+                        <div class="w-2 h-2 rounded-full bg-green-500 mr-3"></div>
+                        Ausbildungsvergütung
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-dark-800/50 rounded-lg">
+                            <span class="text-gray-300">1. Ausbildungsjahr</span>
+                            <span class="text-green-400 font-semibold">1.000 - 1.100 €</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-dark-800/50 rounded-lg">
+                            <span class="text-gray-300">2. Ausbildungsjahr</span>
+                            <span class="text-green-400 font-semibold">1.050 - 1.200 €</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-dark-800/50 rounded-lg">
+                            <span class="text-gray-300">3. Ausbildungsjahr</span>
+                            <span class="text-green-400 font-semibold">1.150 - 1.300 €</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gehälter nach Erfahrung -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-semibold text-white mb-6 flex items-center">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 mr-3"></div>
+                        Gehälter & Einkommen
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-dark-800/50 rounded-lg">
+                            <span class="text-gray-300">Einstiegsgehalt</span>
+                            <span class="text-emerald-400 font-semibold">2.800 - 3.500 €</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-dark-800/50 rounded-lg">
+                            <span class="text-gray-300">Nach 2-3 Jahren</span>
+                            <span class="text-emerald-400 font-semibold">3.200 - 4.000 €</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-dark-800/50 rounded-lg">
+                            <span class="text-gray-300">Mit 5+ Jahren</span>
+                            <span class="text-emerald-400 font-semibold">3.800 - 4.800 €</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-dark-800/50 rounded-lg">
+                            <span class="text-gray-300">Spezialist/Teamleiter</span>
+                            <span class="text-emerald-400 font-semibold">4.500 - 6.000 €</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Zertifizierungen -->
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-semibold text-white mb-6 flex items-center">
+                    <div class="w-2 h-2 rounded-full bg-accent-purple mr-3"></div>
+                    Weiterbildungsmöglichkeiten & Zertifizierungen
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-dark-800/50 rounded-xl p-4 text-center border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                        <div class="text-accent-purple font-semibold mb-1">Microsoft</div>
+                        <div class="text-gray-400 text-sm">Azure, Windows Server</div>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-xl p-4 text-center border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                        <div class="text-accent-pink font-semibold mb-1">Cisco</div>
+                        <div class="text-gray-400 text-sm">CCNA/CCNP</div>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-xl p-4 text-center border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                        <div class="text-accent-cyan font-semibold mb-1">CompTIA</div>
+                        <div class="text-gray-400 text-sm">Network+, Security+</div>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-xl p-4 text-center border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                        <div class="text-accent-blue font-semibold mb-1">Linux</div>
+                        <div class="text-gray-400 text-sm">LPI Zertifizierung</div>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-xl p-4 text-center border border-dark-600 hover:border-accent-purple/30 transition-colors">
+                        <div class="text-green-400 font-semibold mb-1">ITIL</div>
+                        <div class="text-gray-400 text-sm">Foundation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-dark-700">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">L</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-white">Leon</span>
+                        <span class="text-gray-400 text-sm block -mt-1">Praktikant</span>
+                    </div>
+                </div>
+                <div class="text-gray-400 text-sm">
+                    © 2025 Leon Bytyqi — Digitale Praktikumsmappe
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="glass-card rounded-2xl p-6 max-w-md mx-4 w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-semibold text-white"></h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="modal-content" class="text-gray-300 mb-6 whitespace-pre-line"></div>
+            <button onclick="closeModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white font-medium hover:opacity-90 transition-opacity">
+                Schließen
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Week Accordion
+        function toggleWeek(element) {
+            element.classList.toggle('active');
+        }
+        
+        // Modal Functions
+        function showModal(title, content) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-content').textContent = content;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+        
+        // System Info
+        function showSystemInfo() {
+            const now = new Date();
+            const info = `Status: ONLINE ✅
+User: Leon Bytyqi
+Access Level: PRAKTIKANT
+Session: ACTIVE
+Projekt: Fachinformatiker Website
+Letzter Login: ${now.toLocaleDateString('de-DE')}
+Praktikum: Fachinformatiker
+
+🚀 System bereit!`;
+            showModal('System Info', info);
+        }
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
