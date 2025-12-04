@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galerie | Leon - Digitale Praktikumsmappe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0d1117',
+                            800: '#161b22',
+                            700: '#21262d',
+                            600: '#30363d',
+                        },
+                        accent: {
+                            purple: '#8b5cf6',
+                            pink: '#ec4899',
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4',
+                        }
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8b5cf6;
+            border-radius: 4px;
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(22, 27, 34, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Background Gradient Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #8b5cf6;
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #ec4899;
+            bottom: 20%;
+            left: -50px;
+            animation-delay: -3s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.05); }
+        }
+        
+        /* Navigation */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: 200px;
+            gap: 16px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.02);
+            z-index: 10;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        .gallery-item:hover .gallery-info {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(13, 17, 23, 0.95) 0%, rgba(13, 17, 23, 0.4) 50%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .gallery-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        
+        /* Different sizes for masonry effect */
+        .gallery-item.large {
+            grid-column: span 6;
+            grid-row: span 2;
+        }
+        
+        .gallery-item.medium {
+            grid-column: span 4;
+            grid-row: span 2;
+        }
+        
+        .gallery-item.small {
+            grid-column: span 3;
+            grid-row: span 1;
+        }
+        
+        .gallery-item.wide {
+            grid-column: span 6;
+            grid-row: span 1;
+        }
+        
+        @media (max-width: 1024px) {
+            .gallery-item.large,
+            .gallery-item.medium {
+                grid-column: span 6;
+            }
+            .gallery-item.small,
+            .gallery-item.wide {
+                grid-column: span 6;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            .gallery-item.large,
+            .gallery-item.medium,
+            .gallery-item.small,
+            .gallery-item.wide {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+        }
+        
+        /* Filter Buttons */
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+        
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-close:hover {
+            background: rgba(139, 92, 246, 0.5);
+            transform: rotate(90deg);
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-nav:hover {
+            background: rgba(139, 92, 246, 0.5);
+        }
+        
+        .lightbox-prev {
+            left: 24px;
+        }
+        
+        .lightbox-next {
+            right: 24px;
+        }
+        
+        .lightbox-info {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+        }
+        
+        /* Placeholder Image Styles */
+        .placeholder-img {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: rgba(139, 92, 246, 0.5);
+        }
+        
+        .placeholder-1 { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        .placeholder-2 { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%); }
+        .placeholder-3 { background: linear-gradient(135deg, #1e1e3f 0%, #2d2d5a 100%); }
+        .placeholder-4 { background: linear-gradient(135deg, #141428 0%, #1f1f3d 100%); }
+        .placeholder-5 { background: linear-gradient(135deg, #0d0d1a 0%, #1a1a33 100%); }
+        .placeholder-6 { background: linear-gradient(135deg, #12122a 0%, #1e1e40 100%); }
+        
+        /* Fade In Animation */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+        
+        /* Status Pulse */
+        .status-online {
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-100 min-h-screen overflow-x-hidden">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="glass fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">L</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-white">Leon</span>
+                        <span class="text-gray-400 text-sm block -mt-1">Praktikant</span>
+                    </div>
+                </a>
+                
+                <!-- Nav Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#home" class="nav-link text-gray-300 hover:text-white">Start</a>
+                    <a href="index.html#wochen" class="nav-link text-gray-300 hover:text-white">Praktikumswochen</a>
+                    <a href="index.html#beruf" class="nav-link text-gray-300 hover:text-white">Berufssteckbrief</a>
+                    <a href="galerie.html" class="nav-link text-white">Galerie</a>
+                </div>
+                
+                <!-- Status Badge -->
+                <div class="flex items-center space-x-2 px-4 py-2 rounded-full bg-dark-700">
+                    <div class="w-2 h-2 rounded-full bg-green-500 status-online"></div>
+                    <span class="text-sm text-gray-300">Online</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-12 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="fade-in">
+                <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-dark-700 border border-accent-purple/30 mb-6">
+                    <svg class="w-4 h-4 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-sm text-gray-300">Bildergalerie</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-6xl font-bold mb-4">
+                    <span class="gradient-text">Galerie</span>
+                </h1>
+                
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    Eindrücke aus meinem Praktikum — Arbeitsplatz, Projekte und mehr.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Buttons -->
+    <section class="px-6 pb-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-wrap justify-center gap-3">
+                <button class="filter-btn active px-6 py-2 rounded-full bg-dark-700 text-gray-300 text-sm font-medium" data-filter="all">
+                    Alle
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-dark-700 text-gray-300 text-sm font-medium" data-filter="arbeitsplatz">
+                    Arbeitsplatz
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-dark-700 text-gray-300 text-sm font-medium" data-filter="projekte">
+                    Projekte
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-dark-700 text-gray-300 text-sm font-medium" data-filter="technik">
+                    Technik
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-dark-700 text-gray-300 text-sm font-medium" data-filter="team">
+                    Team
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section class="px-6 pb-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="gallery-grid">
+                <!-- Item 1 - Large -->
+                <div class="gallery-item large fade-in delay-1" data-category="arbeitsplatz" data-index="0">
+                    <div class="placeholder-img placeholder-1">
+                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-purple text-sm font-medium">Arbeitsplatz</span>
+                        <h3 class="text-white text-xl font-semibold mt-1">Mein Arbeitsplatz</h3>
+                        <p class="text-gray-400 text-sm mt-2">Hier verbringe ich meinen Praktikumsalltag</p>
+                    </div>
+                </div>
+                
+                <!-- Item 2 - Medium -->
+                <div class="gallery-item medium fade-in delay-2" data-category="technik" data-index="1">
+                    <div class="placeholder-img placeholder-2">
+                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-cyan text-sm font-medium">Technik</span>
+                        <h3 class="text-white text-xl font-semibold mt-1">Serverraum</h3>
+                        <p class="text-gray-400 text-sm mt-2">Das Herzstück der IT-Infrastruktur</p>
+                    </div>
+                </div>
+                
+                <!-- Item 3 - Small -->
+                <div class="gallery-item small fade-in delay-3" data-category="projekte" data-index="2">
+                    <div class="placeholder-img placeholder-3">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-pink text-sm font-medium">Projekte</span>
+                        <h3 class="text-white text-lg font-semibold mt-1">Website Entwicklung</h3>
+                    </div>
+                </div>
+                
+                <!-- Item 4 - Small -->
+                <div class="gallery-item small fade-in delay-4" data-category="technik" data-index="3">
+                    <div class="placeholder-img placeholder-4">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-cyan text-sm font-medium">Technik</span>
+                        <h3 class="text-white text-lg font-semibold mt-1">Hardware</h3>
+                    </div>
+                </div>
+                
+                <!-- Item 5 - Wide -->
+                <div class="gallery-item wide fade-in delay-5" data-category="team" data-index="4">
+                    <div class="placeholder-img placeholder-5">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-green-400 text-sm font-medium">Team</span>
+                        <h3 class="text-white text-xl font-semibold mt-1">Das Team</h3>
+                        <p class="text-gray-400 text-sm mt-2">Zusammenarbeit mit den Kollegen</p>
+                    </div>
+                </div>
+                
+                <!-- Item 6 - Medium -->
+                <div class="gallery-item medium fade-in delay-6" data-category="projekte" data-index="5">
+                    <div class="placeholder-img placeholder-6">
+                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-pink text-sm font-medium">Projekte</span>
+                        <h3 class="text-white text-xl font-semibold mt-1">Kreative Ideen</h3>
+                        <p class="text-gray-400 text-sm mt-2">Brainstorming und Problemlösung</p>
+                    </div>
+                </div>
+                
+                <!-- Item 7 - Small -->
+                <div class="gallery-item small fade-in" data-category="arbeitsplatz" data-index="6">
+                    <div class="placeholder-img placeholder-1">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-purple text-sm font-medium">Arbeitsplatz</span>
+                        <h3 class="text-white text-lg font-semibold mt-1">Bürogebäude</h3>
+                    </div>
+                </div>
+                
+                <!-- Item 8 - Small -->
+                <div class="gallery-item small fade-in" data-category="technik" data-index="7">
+                    <div class="placeholder-img placeholder-2">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-cyan text-sm font-medium">Technik</span>
+                        <h3 class="text-white text-lg font-semibold mt-1">Netzwerk</h3>
+                    </div>
+                </div>
+                
+                <!-- Item 9 - Wide -->
+                <div class="gallery-item wide fade-in" data-category="projekte" data-index="8">
+                    <div class="placeholder-img placeholder-3">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                        </svg>
+                    </div>
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-info">
+                        <span class="text-accent-pink text-sm font-medium">Projekte</span>
+                        <h3 class="text-white text-xl font-semibold mt-1">UI/UX Design</h3>
+                        <p class="text-gray-400 text-sm mt-2">Gestaltung von Benutzeroberflächen</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload CTA -->
+    <section class="px-6 pb-20">
+        <div class="max-w-3xl mx-auto">
+            <div class="p-1 rounded-2xl bg-gradient-to-r from-accent-purple via-accent-pink to-accent-cyan">
+                <div class="bg-dark-900 rounded-2xl p-8 text-center">
+                    <div class="w-16 h-16 rounded-full bg-dark-700 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">Mehr Bilder kommen bald!</h3>
+                    <p class="text-gray-400">Diese Galerie wird während meines Praktikums mit echten Fotos gefüllt.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-dark-700">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">L</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-white">Leon</span>
+                        <span class="text-gray-400 text-sm block -mt-1">Praktikant</span>
+                    </div>
+                </a>
+                
+                <!-- Email -->
+                <a href="/cdn-cgi/l/email-protection#1579707a7b3b776c616c647c2422252c557278747c793b767a78" class="text-gray-400 hover:text-accent-purple transition-colors mb-4 md:mb-0">
+                    📧 <span class="__cf_email__" data-cfemail="6b070e04054509121f121a025a5c5b522b0c060a020745080406">[email&#160;protected]</span>
+                </a>
+                
+                <div class="text-gray-400 text-sm">
+                    © 2025 Leon Bytyqi — Built with 🤖 & Claude AI
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <button class="lightbox-nav lightbox-prev" onclick="prevImage()">‹</button>
+        <button class="lightbox-nav lightbox-next" onclick="nextImage()">›</button>
+        <div class="lightbox-content">
+            <div id="lightbox-image-container" class="flex items-center justify-center">
+                <!-- Image will be inserted here -->
+            </div>
+            <div class="lightbox-info">
+                <h3 id="lightbox-title" class="text-xl font-semibold"></h3>
+                <p id="lightbox-description" class="text-gray-400 mt-1"></p>
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Gallery Data
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        let currentIndex = 0;
+        
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active state
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                        item.style.animation = 'fadeIn 0.5s ease forwards';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Lightbox functionality
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                currentIndex = index;
+                openLightbox(item);
+            });
+        });
+        
+        function openLightbox(item) {
+            const lightbox = document.getElementById('lightbox');
+            const container = document.getElementById('lightbox-image-container');
+            const title = document.getElementById('lightbox-title');
+            const description = document.getElementById('lightbox-description');
+            
+            // Get info from item
+            const itemTitle = item.querySelector('h3')?.textContent || '';
+            const itemDesc = item.querySelector('.gallery-info p')?.textContent || '';
+            const placeholder = item.querySelector('.placeholder-img');
+            
+            // Clone placeholder for lightbox
+            container.innerHTML = '';
+            if (placeholder) {
+                const clone = placeholder.cloneNode(true);
+                clone.style.width = '60vw';
+                clone.style.height = '60vh';
+                clone.style.maxWidth = '800px';
+                clone.style.maxHeight = '500px';
+                clone.style.borderRadius = '16px';
+                container.appendChild(clone);
+            }
+            
+            title.textContent = itemTitle;
+            description.textContent = itemDesc;
+            
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function nextImage() {
+            const visibleItems = Array.from(galleryItems).filter(item => item.style.display !== 'none');
+            const currentVisibleIndex = visibleItems.findIndex(item => parseInt(item.dataset.index) === currentIndex);
+            const nextIndex = (currentVisibleIndex + 1) % visibleItems.length;
+            currentIndex = parseInt(visibleItems[nextIndex].dataset.index);
+            openLightbox(visibleItems[nextIndex]);
+        }
+        
+        function prevImage() {
+            const visibleItems = Array.from(galleryItems).filter(item => item.style.display !== 'none');
+            const currentVisibleIndex = visibleItems.findIndex(item => parseInt(item.dataset.index) === currentIndex);
+            const prevIndex = (currentVisibleIndex - 1 + visibleItems.length) % visibleItems.length;
+            currentIndex = parseInt(visibleItems[prevIndex].dataset.index);
+            openLightbox(visibleItems[prevIndex]);
+        }
+        
+        // Close lightbox on escape or click outside
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') nextImage();
